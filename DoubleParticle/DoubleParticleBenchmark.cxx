@@ -303,11 +303,11 @@ void DoubleParticleBenchmark(const Options& opt = PionNeutronNEndCapOptions, uin
     edm4hep::Vector3f posExp{0, 0, 0};
     for (edm4eic::Cluster c : expected) {
       posExp = c.getPosition();
-      DR_Exp_track=std::hypot(etaMCCharged - edm4hep::utils::eta(posExp), DeltaPhi(mcCharged.Phi(), edm4hep::utils::angleAzimuthal(posExp)));
-      h_DeltaR_MC_Charged->Fill(DR_Exp_track);
-      if(DR_Exp_track<0.6){
+      double DR_track=std::hypot(etaMCCharged - edm4hep::utils::eta(posExp), DeltaPhi(mcCharged.Phi(), edm4hep::utils::angleAzimuthal(posExp)));
+      if(DR_track<0.6){
         if (!hasExp || c.getEnergy() > eExp) {
           eExp = c.getEnergy();
+          DR_Exp_track=DR_track;
           hasExp = true;
         }
       }
@@ -320,11 +320,11 @@ void DoubleParticleBenchmark(const Options& opt = PionNeutronNEndCapOptions, uin
     edm4hep::Vector3f posRem{0, 0, 0};
     for (edm4eic::Cluster c : remnant) {
       posRem = c.getPosition();
-      DR_Rem_track=std::hypot(etaMCNeutral - edm4hep::utils::eta(posRem), DeltaPhi(mcNeutral.Phi(), edm4hep::utils::angleAzimuthal(posRem)));
-      h_DeltaR_MC_Neutral->Fill(DR_Rem_track);
-      if(DR_Rem_track<0.6){
+      double DR_track=std::hypot(etaMCNeutral - edm4hep::utils::eta(posRem), DeltaPhi(mcNeutral.Phi(), edm4hep::utils::angleAzimuthal(posRem)));
+      if(DR_track<0.6){
         if (!hasRem || c.getEnergy() > eRem) {
           eRem = c.getEnergy();
+          DR_Rem_track=DR_track;
           hasRem = true;
         }
       }
@@ -339,6 +339,8 @@ void DoubleParticleBenchmark(const Options& opt = PionNeutronNEndCapOptions, uin
     eff_Neutral_vs_E->Fill(hasRem, eMCNeutral);
     eff_Charged_vs_Eta->Fill(hasExp, etaMCCharged);
     eff_Neutral_vs_Eta->Fill(hasRem, etaMCNeutral);
+    if (hasExp) {h_DeltaR_MC_Charged->Fill(DR_Exp_track);}
+    if (hasRem) {h_DeltaR_MC_Neutral->Fill(DR_Rem_track);}
     if (hasExp) ++nChargedFound;
     if (hasRem) ++nNeutralFound;
 
