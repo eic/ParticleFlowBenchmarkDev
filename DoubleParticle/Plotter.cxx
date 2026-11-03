@@ -5,7 +5,8 @@
 //
 // Run:     root -l -b -q Plotter.cxx
 // Input:   Plots/<label>/<label>.root
-// Output:  Plots/<label>/All_<label>.pdf
+// Output:  Plots/<label>/All_<label>.pdf          (all plots in one file)
+//          Plots/<label>/Single/<canvas>.pdf      (one PDF per plot)
 // ----------------------------------------------------------------------------
 #include <iostream>
 #include <string>
@@ -49,7 +50,7 @@ const int    kColCharged = kAzure + 1;
 const int    kColNeutral = kRed + 1;
 const int    kColTot     = kGreen + 2;
 const int    kColGray    = kGray + 2;
-const double kTextSize   = 0.042;
+const double kTextSize   = 0.045;
 const bool   kHeader     = true;
 const int    kCanvasW    = 800;
 const int    kCanvasH    = 700;
@@ -61,11 +62,22 @@ const double kEMax       = 20.0;   // = range of *_vs_E in the macro
 // ---------- helpers ----------------------------------------------------------
 vector<TCanvas*> gCanvases;
 
-void FlushCombined(const string& file) {
+// Zapisuje kazdy canvas jako osobny PDF do singleDir
+// oraz wszystkie canvasy razem do jednego PDF-a (file).
+void FlushCombined(const string& file, const string& singleDir) {
   if (gCanvases.empty()) return;
+
+  // --- pojedyncze PDF-y ---
+  gSystem->mkdir(singleDir.c_str(), true);
+  for (auto c : gCanvases) {
+    c->Print((singleDir + "/" + c->GetName() + ".pdf").c_str());
+  }
+
+  // --- jeden wspolny PDF ---
   gCanvases.front()->Print((file + "[").c_str());
   for (auto c : gCanvases) c->Print(file.c_str());
   gCanvases.back()->Print((file + "]").c_str());
+
   for (auto c : gCanvases) delete c;
   gCanvases.clear();
 }
@@ -136,7 +148,7 @@ void DrawOverlay(const Sample& s, TH1* a, const string& la, TH1* b, const string
   double ymax = 0;
   for (auto h : hs) ymax = std::max(ymax, h->GetMaximum());
 
-  auto leg = new TLegend(0.20, b ? 0.76 : 0.82, 0.94, 0.90);
+  auto leg = new TLegend(0.2, b ? 0.78 : 0.84, 0.94, 0.90);
   leg->SetTextSize(kTextSize);
 
   for (size_t i = 0; i < hs.size(); ++i) {
@@ -149,7 +161,7 @@ void DrawOverlay(const Sample& s, TH1* a, const string& la, TH1* b, const string
       h->SetMarkerStyle(20 + i);
       h->SetMarkerSize(1.0);
       h->SetMinimum(0.0);
-      h->SetMaximum(1.6);
+      h->SetMaximum(4.0);
     } else {
       h->SetFillColorAlpha(cs[i], 0.3);
     }
@@ -182,7 +194,7 @@ void DrawOverlay(const Sample& s, TEfficiency* a, const string& la, TEfficiency*
   auto fr = c->DrawFrame(xlo, 0.0, xhi, 1.25);
   fr->GetXaxis()->SetTitle(xt.c_str());
   fr->GetYaxis()->SetTitle("Efficiency");
-  auto leg = new TLegend(0.20, b ? 0.76 : 0.82, 0.94, 0.90);
+  auto leg = new TLegend(0.5, b ? 0.78 : 0.84, 0.94, 0.90);
   leg->SetTextSize(kTextSize);
 
   vector<TEfficiency*> es = {a};
@@ -208,7 +220,8 @@ void DrawSample(const Sample& s, TFile* f) {
   const string dir = "Plots/" + s.label;
   gSystem->mkdir(dir.c_str(), true);
   gCanvases.clear();
-  const string pdf = dir + "/All_" + s.label + ".pdf";
+  const string pdf       = dir + "/All_" + s.label + ".pdf";
+  const string singleDir = dir + "/Single";
 
   const string C = s.chg;
   const string N = s.neu;
@@ -297,8 +310,9 @@ void DrawSample(const Sample& s, TFile* f) {
   DrawOverlay(s, efCEta, "Charged (expected)", efNEta, "Neutral (remnant)",
               etaLab, "c_eff_vs_eta", s.eta[0], s.eta[1]);
 
-  FlushCombined(pdf);
+  FlushCombined(pdf, singleDir);
   cout << "  -> " << pdf << endl;
+  cout << "  -> " << singleDir << "/*.pdf" << endl;
 }
 
 

@@ -108,7 +108,7 @@ const Options ElectronBarrelOptions = {
 };
 
 const Options PionLFOptions = {
-  "/run/media/epic/Data/Benchmarking/Single/Pion/Pion_2.PEndCap.root",
+  "/run/media/epic/Data/Benchmarking/Single/Pion/Pion_2.LFHCAL.root",
   "Plots/PionLFHCAL.root",
   "LFHCALClusters",
   "CalorimeterTrackProjections",
@@ -173,7 +173,7 @@ double DeltaPhi(double phi1, double phi2) {
 }
 
 // macro body -----------------------------------------------------------------
-void BenchmarkTrackCluster(const Options& opt = ElectronPEndCapOptions, uint64_t s_use = 1) {
+void BenchmarkTrackCluster(const Options& opt = PionLFOptions, uint64_t s_use = 1) {
 
     TFile *Output = new TFile(opt.out_file.c_str(), "RECREATE");
 
@@ -489,8 +489,7 @@ void BenchmarkTrackCluster(const Options& opt = ElectronPEndCapOptions, uint64_t
 
             const int dGood = nGood - prevGood;
             const int dBad  = nBad  - prevBad;
-            const double marginalRatio = (dBad > 0) ? double(dGood) / dBad
-                                                    : std::numeric_limits<double>::infinity();
+            const double marginalRatio = (dBad > 0) ? double(dGood) / dBad : std::numeric_limits<double>::infinity();
 
             std::cout << std::left
                       << std::setw(8)  << drCut

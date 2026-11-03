@@ -46,7 +46,7 @@ const vector<Sample> samples = {
   {"PionLFHCAL",      "#pi^{-} LFHCAL",           kRed+1,    { 1.0,  3.5},  {0.0, 13.0}},
 };
 
-const double kTextSize  = 0.042;  // TLatex text size
+const double kTextSize  = 0.045;  // TLatex text size
 const bool   kHeader    = true;   // "ePIC Benchmark | ..." header (set false for a paper)
 const int    kCanvasW   = 800;    // single-plot canvas size
 const int    kCanvasH   = 700;
@@ -120,12 +120,23 @@ void Header(const string& title) {
 }
 
 // Draw text lines (TLatex) in the upper-right corner.
-void Text(const vector<string>& lines, double x = 0.58, double y = 0.88) {
-  TLatex t;
+void Text(const vector<string>& lines, double x = 0.66, double y = 0.88, int color= kBlack, bool outline = false) {
+   TLatex t;
   t.SetNDC();
   t.SetTextFont(42);
   t.SetTextSize(kTextSize);
-  for (auto& l : lines) { t.DrawLatex(x, y, l.c_str()); y -= 1.3 * kTextSize; }
+  const double d = 0.002;   // grubość obwódki (współrzędne NDC)
+  for (auto& l : lines) {
+    if (outline) {
+      t.SetTextColor(kBlack);
+      for (int dx = -1; dx <= 1; dx++)
+        for (int dy = -1; dy <= 1; dy++)
+          if (dx || dy) t.DrawLatex(x + dx * d, y + dy * d, l.c_str());
+    }
+    t.SetTextColor(color);
+    t.DrawLatex(x, y, l.c_str());
+    y -= 1.3 * kTextSize;
+  }
 }
 
 void Line(TH1* h, int col) {
@@ -155,7 +166,7 @@ void DrawTruthHit(const Sample& s, TH1* all, TH1* hit, const char* xt,
   all->GetYaxis()->SetTitle("Particles");
   all->GetXaxis()->SetRangeUser(lo, hi);
   all->SetMinimum(0);
-  all->SetMaximum(1.35 * all->GetMaximum());
+  all->SetMaximum(1.45 * all->GetMaximum());
   all->Draw("hist");
   hit->Draw("hist same");
   Header(s.title);
@@ -165,7 +176,7 @@ void DrawTruthHit(const Sample& s, TH1* all, TH1* hit, const char* xt,
   leg->AddEntry(hit, "MC matched", "f");
   leg->Draw();
   Text({Fmt("Matched: %.1f %%", 100 * frac),
-        Fmt("%.1f < #eta < %.1f", s.eta[0], s.eta[1])}, 0.62, 0.74);
+        Fmt("%.1f < #eta < %.1f", s.eta[0], s.eta[1])}, 0.65, 0.74);
   Save(c, s, name);
 }
 
@@ -176,7 +187,7 @@ void DrawHist(const Sample& s, TH1* h, const char* xt, const char* yt,
   Line(h, s.color);
   h->GetXaxis()->SetTitle(xt);
   h->GetYaxis()->SetTitle(yt);
-  h->SetMaximum(1.35 * h->GetMaximum());
+  h->SetMaximum(1.45 * h->GetMaximum());
   h->Draw("hist");
   Header(s.title);
   if (stats)
@@ -202,7 +213,7 @@ void Draw2D(const Sample& s, TH2* h, TH1* prof, const char* xt, const char* yt,
     prof->Draw("same");
   }
   Header(s.title);
-  if (prof && f_sub > 0) Text({"Black: mean profile", Fmt("f_{sub} = %.3f", f_sub)}, 0.50, 0.88);
+  if (prof && f_sub > 0) Text({"Black: mean profile", Fmt("f_{sub} = %.3f", f_sub)}, 0.18, 0.88, kWhite, true);
   Save(c, s, name);
 }
 
@@ -270,13 +281,13 @@ void DrawSample(const Sample& s, TFile* f) {
     Line(sub, s.color);
     sub->GetXaxis()->SetTitle("E_{clust} - f_{sub} E_{trk} [GeV]");
     sub->GetYaxis()->SetTitle("Events");
-    sub->SetMaximum(1.35 * sub->GetMaximum());
+    sub->SetMaximum(1.45 * sub->GetMaximum());
     sub->Draw("hist");
     Header(s.title);
     Text({Fmt("f_{sub} = %.3f", f_sub),
           Fmt("Mean = %.3f GeV", sub->GetMean()),
           Fmt("Std = %.3f GeV",  sub->GetStdDev()),
-          Fmt("Entries = %.0f",  sub->GetEntries())});
+          Fmt("Entries = %.0f",  sub->GetEntries())},0.60, 0.88);
     Save(c, s, "c_EClustMinusFsubEtrk");
   }
   // (E_ECal + E_HCal) / p_Tr - pions only
