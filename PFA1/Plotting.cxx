@@ -188,7 +188,7 @@ void DrawSpeciesPlots(const char* label, TFile* file, Int_t color) {
     c_eOver->cd(1);
     gPad->SetBottomMargin(0.15);
     SetLargeAxisStyle(EClusteroverETrack);
-    EClusteroverETrack->SetTitle("Cluster energy / track momentum;E_{Cl}/p_{Tr};Events");
+    EClusteroverETrack->SetTitle("track momentum / cluster energy;p_{Tr}/E_{Cl};Events");
     EClusteroverETrack->Draw("hist");
     c_eOver->cd(2);
     gPad->SetBottomMargin(0.15);
@@ -209,7 +209,7 @@ void DrawSpeciesPlots(const char* label, TFile* file, Int_t color) {
     gPad->SetLeftMargin(0.15);
     gPad->SetBottomMargin(0.15);
     SetLargeAxisStyle(EnergyRatiovsTrackPt);
-    EnergyRatiovsTrackPt->SetTitle("E_{Cl}/E_{Tr} vs track p_{T};p_{T} [GeV];E_{Cl}/E_{Tr}");
+    EnergyRatiovsTrackPt->SetTitle("E_{Tr}/E_{Cl} vs track p_{T};p_{T} [GeV];E_{Tr}/E_{Cl}");
     EnergyRatiovsTrackPt->Draw("COLZ");
     EnergyRatioProfilevsTrackPt->SetLineColor(kRed);
     EnergyRatioProfilevsTrackPt->SetMarkerColor(kRed);
@@ -226,7 +226,7 @@ void DrawSpeciesPlots(const char* label, TFile* file, Int_t color) {
     gPad->SetBottomMargin(0.15);
     gPad->SetLeftMargin(0.15);
     SetLargeAxisStyle(EnergyRatiovsTrackEta);
-    EnergyRatiovsTrackEta->SetTitle("E_{Cl}/E_{Tr} vs track #eta;#eta;E_{Cl}/E_{Tr}");
+    EnergyRatiovsTrackEta->SetTitle("E_{Tr}/E_{Cl} vs track #eta;#eta;E_{Tr}/E_{Cl}");
     EnergyRatiovsTrackEta->Draw("COLZ");
     EnergyRatioProfilevsTrackEta->SetLineColor(kRed);
     EnergyRatioProfilevsTrackEta->SetMarkerColor(kRed);

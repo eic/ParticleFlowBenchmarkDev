@@ -102,12 +102,12 @@ void BenchmarkTrackCluster(const Options& opt = PionOptions) {
     TH2D* DeltaEtaPhiHist= new TH2D("DeltaEtaPhiHist","DeltaEtaPhiHist;#eta,#phi",1000,-0.3,0.3,1000,-0.3,0.3);
 
     // ECluster/ETrack histograms 
-    TH1D* EClusteroverETrack= new TH1D("EClusteroverETrack","E_{Cl}/E_{Tr};Ratio E_{Cl}/E_{Tr};Events",100,0,5);
+    TH1D* EClusteroverETrack= new TH1D("EClusteroverETrack","E_{Tr}/E_{Cl};Ratio E_{Tr}/E_{Cl};Events",100,0,5);
     TH1D* EMCoverECluster= new TH1D("EMCoverECluster","E_{MC}/E_{Cl};Ratio E_{MC}/E_{Cl};Events",100,0,5);
     TH1D* EMCoverETrack= new TH1D("EMCoverETrack","E_{MC}/E_{Tr};Ratio E_{MC}/E_{Tr};Events",100,0,5);
 
-    TH2D* EnergyRatiovsTrackPt= new TH2D("EnergyRatiovsTrackPt","E_{Cl}/E_{Tr} vs TrackPt;pT [GeV];Ratio E_{Cl}/E_{Tr}",45,0,9,100,0,5);
-    TH2D* EnergyRatiovsTrackEta= new TH2D("EnergyRatiovsTrackEta","EnergyRatiovsTrackEta;#eta;Ratio E_{Cl}/E_{Tr}",50,1.25,3.5,100,0,5);
+    TH2D* EnergyRatiovsTrackPt= new TH2D("EnergyRatiovsTrackPt","E_{Tr}/E_{Cl} vs TrackPt;pT [GeV];Ratio E_{Tr}/E_{Cl}",45,0,9,100,0,5);
+    TH2D* EnergyRatiovsTrackEta= new TH2D("EnergyRatiovsTrackEta","EnergyRatiovsTrackEta;#eta;Ratio E_{Tr}/E_{Cl}",50,1.25,3.5,100,0,5);
 
     // Multiplicity of tracks and clusters
     TH1D* NClustersPerEvent = new TH1D("NClustersPerEvent", "Number of clusters per event;N_{clusters};Events", 10, -0.5, 9.5);
